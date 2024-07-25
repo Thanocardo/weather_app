@@ -1,0 +1,31 @@
+
+body{
+    background-image: url(https://images.pexels.com/photos/941459/pexels-photo-941459.jpeg?cs=srgb&dl=pexels-hammyx-941459.jpg&fm=jpg);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-attachment: fixed;
+    margin: 0;
+}
+
+#centerTexth {
+    display: flex; 
+    align-items: center; 
+    justify-content: center;
+}
+
+#tuggle-button{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-top: 24px;
+}
+
+#card{
+    max-width: 500px;
+}
+
+#favIcon {
+    padding-bottom: 20px; 
+    padding-left: 15px;
+}
