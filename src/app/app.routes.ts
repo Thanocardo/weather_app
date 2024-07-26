@@ -5,12 +5,12 @@ import { FavouritePageComponent } from './favourite-page/favourite-page.componen
 export const routes: Routes = [
     {
         path: "",
-        title: "Search",
+        title: "Weather",
         component: SearchPageComponent
     },
     {
         path: "favourite",
-        title: "Favourite",
+        title: "Favourite Cities",
         component: FavouritePageComponent
     }
 ];

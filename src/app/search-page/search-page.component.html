@@ -1,14 +1,13 @@
 <section>
     <div>
         <div id="search-block">
-            <form [formGroup]="cityForm" (ngSubmit)="searchCity(cityForm.value.city!)">
+            <form [formGroup]="cityForm" (ngSubmit)="searchCity(cityForm.value.city!)" id="cityForm">
                 <div>
                     <input type="search" class="form-control" formControlName="city" type="text" placeholder="city"/>
                 </div>
             </form>
-            <button type="submit" class="btn btn-primary"  data-mdb-ripple-init>Search City</button>
+            <button type="submit" class="btn btn-primary" form="cityForm">Search City</button>
         </div>
-        
     </div>
 
     @if (cities.length > 0) {
@@ -19,10 +18,10 @@
         </div>
         @for (curCity of cities; track curCity.Key) {
         <div class="row d-flex justify-content-center py-4">
-            <div class="col-md-8 col-lg-6 col-xl-5" id="card" >
+            <div class="col-md-8 col-lg-6 col-xl-5" id="card">
                 
                 <div class="card text-body" style=" border-radius: 35px; background:rgba(255, 237, 237, 0.6); " >
-                    <div (click)="selectCity(curCity)" style="cursor: pointer;">
+                    <div>
                         <div class="card-body p-4">
                             <div class="d-flex">
                                 <h3 class="flex-grow-1" style="font-weight: bold;">{{ curCity.LocalizedName }}</h3>
@@ -37,8 +36,9 @@
                 }
 
                 @if (forecast["DailyForecasts"] && forecast.Key === curCity.Key ) {
+                    <h3 id="centerTexth" (click)="unselectCity()" style="cursor: pointer; padding-bottom: 15px;">Hide Forecast</h3>
                     <div>
-                        <h3 id="centerTexth">5-Day Forecast</h3>
+                        <h3 id="centerTexth">5-Day Forecast:</h3>
                         @for (day of forecast.DailyForecasts; track day.Date) {
                             <h3 id="centerTexth">{{ getDayOfWeek(day.Date) }}:
                                 @if (temperatureUnit === "F") {
@@ -53,33 +53,31 @@
                     </div>
                 }
                 @else {
-                    <h3 id="centerTexth">Show Forecast</h3>
+                    <h3 id="centerTexth"  (click)="selectCity(curCity)" style="cursor: pointer;">Show Forecast</h3>
                 }
 
                         </div>
                     </div>
-                    <div class="d-flex align-items-center">
-                        <div class="flex-grow-1" style="font-size: 1rem;">
-                            <button (click)="toggleFavorite(curCity)" style="background: none; border: none; outline: none; box-shadow: none;">
-                                @if (FavoriteHandler.isFavorite(curCity.Key)) {
-                                    <img id="favIcon" src="icons8-star-96.png" alt="remove-to-favourite-icon"> 
-                                }
-                                @else {
-                                    <img id="favIcon" src="icons8-star-962.png" alt="add-to-favourite-icon">
-                                }
-                            </button>
-                        </div>
+                        <div class="d-flex align-items-center">
+                            <div class="flex-grow-1" style="font-size: 1rem;">
+                                <button (click)="toggleFavorite(curCity)" style="background: none; border: none; outline: none; box-shadow: none;">
+                                    @if (FavoriteHandler.isFavorite(curCity.Key)) {
+                                        <img id="favIcon" src="icons8-star1.png" alt="remove-to-favourite-icon"> 
+                                    }
+                                    @else {
+                                        <img id="favIcon" src="icons8-star2.png" alt="add-to-favourite-icon">
+                                    }
+                                </button>
+                            </div>
                         @if (currentWeather[curCity.Key]) {
                             <div>
-                                
-                                    <img [src]="currentWeather[curCity.Key].WeatherIcon + '.png'" width="150px" style="margin: -20px;">
-                                     
+                                <img [src]="currentWeather[curCity.Key].WeatherIcon + '.png'" width="150px" style="margin: -20px;"> 
                             </div>
                         }
                     </div>
                 </div>
-                </div>
             </div>
+        </div>
 
         }
     }
