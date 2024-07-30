@@ -14,10 +14,17 @@ export class SearchPageComponent extends BasePageCompoment {
 
   ngOnInit(): void {
     const sofiaCityKey = "51097";
-      this.WeatherApiHandler.getCurrentWeather(sofiaCityKey).subscribe(weatherData => {
-        this.currentWeather[sofiaCityKey] = weatherData[0];
-        console.log(this.currentWeather)
-      });
+      this.WeatherApiHandler.getCurrentWeather(sofiaCityKey).subscribe(
+        {
+          next: (weatherData: any[]) => {
+            this.currentWeather[sofiaCityKey] = weatherData[0];
+          },
+          error: (err: Error) => {
+            this.cities = []
+            console.log(err)
+          }
+        }
+      );
     };
 
   searchCity (city: string) {
