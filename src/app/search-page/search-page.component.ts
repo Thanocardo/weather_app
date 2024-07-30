@@ -19,9 +19,8 @@ export class SearchPageComponent extends BasePageCompoment {
           next: (weatherData: any[]) => {
             this.currentWeather[sofiaCityKey] = weatherData[0];
           },
-          error: (err: Error) => {
+          error: () => {
             this.cities = []
-            console.log(err)
           }
         }
       );
