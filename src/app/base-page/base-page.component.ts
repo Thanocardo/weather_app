@@ -1,47 +1,56 @@
 import { Component, inject } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { WeatherApiHandler } from '../_handlers/weather-api-handler';
-import { FavoriteHandler } from '../_handlers/favorite-handler'
+import { Store } from '@ngrx/store';
+import { FavoriteHandler } from '../_handlers/favorite-handler';
+import { selectCities, selectCurrentWeather, selectFavorites, selectForecast } from '../store/weather.selectors';
+import { AppState } from '../store/app.state';
+import * as WeatherActions from '../store/weather.actions';
 
 @Component({
   selector: 'app-base-page',
   standalone: true,
   imports: [],
   templateUrl: './base-page.component.html',
-  styleUrl: './base-page.component.css'
+  styleUrls: ['./base-page.component.css']
 })
-export class BasePageCompoment {
-  cities: any[] = [{"Version":1,"Key":"51097","Type":"City","Rank":20,"LocalizedName":"Sofia","Country":{"ID":"BG","LocalizedName":"Bulgaria"},"AdministrativeArea":{"ID":"22","LocalizedName":"Sofia City"}},];
-  currentWeather: any = {};
-  selectedCity: any = {};
-  forecast: any = {};
-  temperatureUnit = "C" 
-  cityForm = new FormGroup ({
-  city: new FormControl('')
-})
+export class BasePageComponent {
+  cities = this.store.select(selectCities);
+  currentWeather = this.store.select(selectCurrentWeather);
+  forecast = this.store.select(selectForecast);
+  selectedCity = {};
+  temperatureUnit = 'C';
 
-WeatherApiHandler = inject(WeatherApiHandler)
-FavoriteHandler = inject(FavoriteHandler)
+  cityForm = new FormGroup({
+    city: new FormControl('')
+  });
+
+  constructor(public store: Store<AppState>) {}
+
+  FavoriteHandler = inject(FavoriteHandler)
 
   selectCity(city: any): void {
     this.selectedCity = city;
-    this.WeatherApiHandler.get5DayForecast(city.Key).subscribe(data => {
-      this.forecast = data;
-      this.forecast["Key"] = city.Key
-    });
+    this.store.dispatch(WeatherActions.load5DayForecast({ cityKey: city.Key }));
   }
 
-  unselectCity():void {
-    this.selectedCity = {}
-    this.forecast = {}
+  unselectCity(): void {
+    this.selectedCity = {};
   }
 
   toggleFavorite(city: any): void {
-    if (this.FavoriteHandler.isFavorite(city.Key)) {
-      this.FavoriteHandler.removeFavorite(city.Key);
+    if (this.isFavorite(city.Key)) {
+      this.store.dispatch(WeatherActions.removeFavorite({ cityKey: city.Key }));
     } else {
-      this.FavoriteHandler.addFavorite(city);
+      this.store.dispatch(WeatherActions.addFavorite({ city }));
     }
+  }
+
+  isFavorite(cityKey: string): boolean {
+    let isFav = false;
+    this.store.select(selectFavorites).subscribe(favorites => {
+      isFav = !!favorites.find(fav => fav.Key === cityKey);
+    });
+    return isFav;
   }
 
   getDayOfWeek(dateString: string): string {

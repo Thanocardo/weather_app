@@ -1,42 +1,30 @@
-import { Component } from '@angular/core';
-import { ReactiveFormsModule  } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
+import { ReactiveFormsModule } from '@angular/forms';
 import { RouterOutlet } from '@angular/router';
-import { BasePageCompoment } from '../base-page/base-page.component';
+import { BasePageComponent } from '../base-page/base-page.component';
+import { CommonModule } from '@angular/common';
+import * as WeatherActions from '../store/weather.actions';
 
 @Component({
   selector: 'app-search-page',
   standalone: true,
-  imports: [RouterOutlet, ReactiveFormsModule],
+  imports: [RouterOutlet, ReactiveFormsModule, CommonModule],
   templateUrl: './search-page.component.html',
-  styleUrl: './search-page.component.css'
+  styleUrls: ['./search-page.component.css']
 })
-export class SearchPageComponent extends BasePageCompoment {
+export class SearchPageComponent extends BasePageComponent implements OnInit {
 
   ngOnInit(): void {
-    const sofiaCityKey = "51097";
-      this.WeatherApiHandler.getCurrentWeather(sofiaCityKey).subscribe(
-        {
-          next: (weatherData: any[]) => {
-            this.currentWeather[sofiaCityKey] = weatherData[0];
-          },
-          error: () => {
-            this.cities = []
-          }
-        }
-      );
-    };
+    const sofiaCityKey = '51097';
+    this.store.dispatch(WeatherActions.loadCurrentWeather({ cityKey: sofiaCityKey }));
+  }
 
-  searchCity (city: string) {
-    this.cities = []  
-    this.WeatherApiHandler.getCityAutocomplete(city).subscribe(data => {
-      this.cities = data;
-      this.cities.forEach((city: any) => {
-        this.WeatherApiHandler.getCurrentWeather(city.Key).subscribe(weatherData => {
-          this.currentWeather[city.Key] = weatherData[0];
-        });
-      });
-    });
-    this.selectedCity = {}
-    this.forecast = {}
+  searchCity(city: string): void {
+    this.store.dispatch(WeatherActions.loadCityAutocomplete({ query: city }));
+    this.cities.subscribe(cities => {
+      cities.forEach((city) => {
+        this.store.dispatch(WeatherActions.loadCurrentWeather({ cityKey: city.Key }))
+      })
+    })
   }
 }

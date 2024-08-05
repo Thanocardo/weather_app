@@ -1,11 +1,11 @@
-
 body{
-    background-image: url(https://images.pexels.com/photos/941459/pexels-photo-941459.jpeg?cs=srgb&dl=pexels-hammyx-941459.jpg&fm=jpg);
+    background-image: url(/pexels-hammyx-941459.png);
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
     background-attachment: fixed;
     margin: 0;
+    overflow: hidden;
 }
 
 #centerTexth {

@@ -21,6 +21,4 @@ export class WeatherApiHandler {
   get5DayForecast(locationKey: string): Observable<any> {
     return this.http.get(`http://dataservice.accuweather.com/forecasts/v1/daily/5day/${locationKey}?apikey=${this.apiKey}`);
   }
-
-  
 }
