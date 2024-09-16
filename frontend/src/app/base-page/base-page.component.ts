@@ -1,13 +1,12 @@
 import { Component, inject } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { select, Store } from '@ngrx/store';
+import { Store } from '@ngrx/store';
 import { FavoriteHandler } from '../_handlers/favorite-handler';
 import { selectCities, selectCurrentWeather, selectFavorites, selectForecast } from '../store/weather.selectors';
 import { AppState } from '../store/app.state';
 import * as WeatherActions from '../store/weather.actions';
 import { City } from '../store/weather.actions';
 import { AuthService } from '../_handlers/auth';
-import { map } from 'rxjs';
 
 @Component({
   selector: 'app-base-page',
@@ -41,77 +40,24 @@ export class BasePageComponent {
     this.selectedCity = {};
   }
 
-  // toggleFavorite(city: any): void {
-  //   console.log(this.authService.isAuthenticated())
-  //   if (this.isFavorite(city)) {
-  //     this.store.dispatch(WeatherActions.removeFavorite({ cityKey: city.Key }));
-  //   } else {
-  //     this.store.dispatch(WeatherActions.addFavorite({ city }));
-  //   }
-  // }
-
-  // isFavorite(city: City): boolean {
-  //   let isFav = false;
-  //   this.favorites.subscribe(favorites => {
-  //     isFav = !!favorites.find(fav => fav === city);
-  //   });
-  //   console.log(isFav)
-  //   return isFav;
-  // }
-
   toggleFavorite(city: City): void {
     const isFav = this.isFavorite(city.Key)
     if (isFav) {
-      console.log(this.authService.isAuthenticated())
-      this.store.dispatch(WeatherActions.removeFavorite({ cityKey: city.Key }));
+      this.store.dispatch(WeatherActions.removeFavorite({ city }));
     }
     else {
       this.store.dispatch(WeatherActions.addFavorite({ city }));
     }
   }
 
-
-  // isFavorite(curCity) {
-  //   if (this.FavoriteHandler.favorites.find(curCity) > 0) {
-  //     return true
-  //   }
-  //   else {
-  //     return false
-  //   }
-
-  // // this.favorites.subscribe(cities => {for (let city of cities) {
-  // //   if (city.Key === curCity.Key) {
-  // //     isFav = true
-  // //     break
-  // //   }}}
-  // // )
-  // // this.favorites.subscribe(cities =>
-  // //   // {if (cities.some(city => city.Key === curCity.Key)
-  // //   // console.log(typeof cities)
-  // //   console.log(this.cities)
-  // //   // console.log(cities.values)
-  // // ) 
-  // // {
-  // //   isFav = true
-  // // }}
-  // // )
-
-  // //   const isFav = this.favorites.subscribe(cities => cities.map(city => {if(city.Key === curCity.Key) { return true } else {return false}} ))
-    
-  // // this.favorites.pipe(
-  // //     map(cities => cities.some(city => city.Key === curCity.Key))
-  // //   )
-  // // this.favorites.subscribe(cities => cities.forEach(city => city.Key === curCity.Key ? isFav = true : isFav = isFav))
-
-  // // return isFav
-  // }
-
   isFavorite(cityKey: string): boolean {
-    let isFav = false;
-    this.store.select(selectFavorites).subscribe(favorites => {
-      isFav = !!favorites.find(fav => fav.Key === cityKey);
-    });
-    return isFav;
+    let isFav = false
+    this.favorites.subscribe((cities) => {for (let city of ensureArray(cities)) {
+      if (city.Key === cityKey) {
+      isFav = true
+      break
+    }}})
+    return isFav
   }
 
 
@@ -125,3 +71,8 @@ export class BasePageComponent {
     this.temperatureUnit = unit === 'F' ? 'C' : 'F';
   }
 }
+
+
+const ensureArray = <T>(data: T | T[]): T[] => {
+  return Array.isArray(data) ? data : [data];
+};

@@ -134,12 +134,12 @@ export const addFavorite = createAction(
 
 export const removeFavorite = createAction(
   '[Favorites] Remove Favorite',
-  props<{ cityKey: string }>()
+  props<{ city: City }>()
 );
 
 export const loadFavorites = createAction('[Favorites] Load Favorites');
 
 export const loadFavoritesSuccess = createAction(
   '[Favorites] Load Favorites Success',
-  props<{ favorites: City[] }>()
+  props<{ favorites }>()
 );

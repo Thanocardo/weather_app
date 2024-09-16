@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { WeatherApiHandler } from '../_handlers/weather-api-handler';
-import { catchError, map, mergeMap } from 'rxjs/operators';
+import { catchError, exhaustMap, map, mergeMap, switchMap, } from 'rxjs/operators';
 import { of } from 'rxjs';
 import * as WeatherActions from '../store/weather.actions';
 import { AuthService } from '../_handlers/auth';
@@ -56,16 +56,15 @@ export class WeatherEffects {
   loadFavorites$ = createEffect(() =>
     this.actions$.pipe(
       ofType(WeatherActions.loadFavorites),
-      map(() => {
-        let favorites
+      exhaustMap(() => {
         if (this.authService.isAuthenticated()) {
-          favorites = this.favoriteHandler.getFavoriteCities(this.authService.getToken()!)
+          const favorites = this.favoriteHandler.getFavoriteCities(this.authService.getToken())
+          return of(WeatherActions.loadFavoritesSuccess({ favorites }))
         }
         else { 
-          favorites = this.favoriteHandler.getFavoriteCities(); 
+          const favorites = this.favoriteHandler.getFavoriteCities(); 
+          return of(WeatherActions.loadFavoritesSuccess({ favorites }));
         }
-        
-        return WeatherActions.loadFavoritesSuccess({ favorites });
       })
     )
   );
@@ -73,20 +72,15 @@ export class WeatherEffects {
   addFavorite$ = createEffect(() =>
     this.actions$.pipe(
       ofType(WeatherActions.addFavorite),
-      map(action => {
-        let favorites
+      switchMap(action => {
         if (this.authService.isAuthenticated()) {
-          this.favoriteHandler.addFavoriteCity(action.city, this.authService.getToken()!)
-          favorites = this.favoriteHandler.getFavoriteCities(this.authService.getToken()!)
+          return this.favoriteHandler.addFavoriteCity(action.city, this.authService.getToken()).pipe(map(favorites => WeatherActions.loadFavoritesSuccess({ favorites })))
         }
-        else { 
+        else {
           this.favoriteHandler.addFavoriteCity(action.city);
-          favorites = this.favoriteHandler.getFavoriteCities()
+          const favorites = this.favoriteHandler.getFavoriteCities()
+          return of(WeatherActions.loadFavoritesSuccess({ favorites }));
         }
-        // const favorites = JSON.parse(localStorage.getItem('favoriteLocations') || '[]');
-        // favorites.push(action.city);
-        // localStorage.setItem('favoriteLocations', JSON.stringify(favorites));
-        return WeatherActions.loadFavoritesSuccess({ favorites });
       })
     )
   );
@@ -94,18 +88,17 @@ export class WeatherEffects {
   removeFavorite$ = createEffect(() =>
     this.actions$.pipe(
       ofType(WeatherActions.removeFavorite),
-      map(action => {
-        let favorites
+      switchMap(action => {
         if (this.authService.isAuthenticated()) {
-          this.favoriteHandler.removeFavoriteCity(action.cityKey, this.authService.getToken()!)
-          favorites = this.favoriteHandler.getFavoriteCities(this.authService.getToken()!)
+          this.favoriteHandler.removeFavoriteCity(action.city, this.authService.getToken())
+          return of(WeatherActions.loadFavoritesSuccess({ favorites: localStorage.getItem('favoriteLocations' || "[]")}))
         }
         else {
-          this.favoriteHandler.removeFavoriteCity(action.cityKey)
-          favorites = this.favoriteHandler.getFavoriteCities()
+          this.favoriteHandler.removeFavoriteCity(action.city);
+          const favorites = this.favoriteHandler.getFavoriteCities()
+          
+          return of(WeatherActions.loadFavoritesSuccess({ favorites }));
         }
-
-        return WeatherActions.loadFavoritesSuccess({ favorites });
       })
     )
   );

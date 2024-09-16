@@ -30,7 +30,7 @@ export class FavoriteCitiesService {
 
     const user_id = decodedToken.user_id;
 
-    const user = await this.userRepository.findOne({where: {id: user_id }});
+    const user = await this.userRepository.findOne({where: { id: user_id }});
     if (!user) {
       throw new UnauthorizedException("User not found");
     }
@@ -48,45 +48,47 @@ export class FavoriteCitiesService {
       user: user,
     });
 
-    return await this.favCityRepository.save(favoriteCity);
+    await this.favCityRepository.save(favoriteCity);
+
+    return await this.findAllFavoriteCitiesByUserToken(token);
     
   }
 
-  async findAllFavoriteCitiesByUserToken(token: string): Promise<FavoriteCity[]> {
+  async findAllFavoriteCitiesByUserToken(token: string) {
 
-    let decodedToken;
-    
     try {
       this.jwtService.verify(token);
-      decodedToken = this.jwtService.decode(token)
     } catch (error) {
       throw new UnauthorizedException('Invalid token');
     }
 
-    let cities = this.favCityRepository.find({
-      where: {
-        user: {id: decodedToken.user_id},
-      }
-    })
+    const decodedToken = this.jwtService.decode(token)
+    const user_id = decodedToken.user_id;
 
-    return await cities 
+    const cities = await this.favCityRepository.find({
+      where: { user: {id: user_id}}
+    })
+    
+    const toReturn = this.mapToCityInterface(cities)
+
+    return toReturn
   }
 
   async removeFavoriteCity(token: string, city_id: string) {
-
-    let decodedToken;
     
     try {
       this.jwtService.verify(token);
-      decodedToken = this.jwtService.decode(token)
     } catch (error) {
       throw new UnauthorizedException('Invalid token');
     }
+
+    const decodedToken = this.jwtService.decode(token)
+    const user_id = decodedToken.user_id;
 
     const favoriteCity = await this.favCityRepository.find({
       where: {
         key: city_id,
-        user: {id: decodedToken.user_id},
+        user: {id: user_id},
       },
     });
 
@@ -97,5 +99,26 @@ export class FavoriteCitiesService {
     favoriteCity.forEach(city => city.user = null);
 
     await this.favCityRepository.save(favoriteCity);
+
+    return await this.findAllFavoriteCitiesByUserToken(token);
+  }
+
+  mapToCityInterface(favoriteCities) {
+    return favoriteCities.map(city => ({
+      Version: city.version,
+      Key: city.key,
+      Type: city.type,
+      Rank: city.rank,
+      LocalizedName: city.localizedName,
+      Country: {
+        ID: city.country_id,
+        LocalizedName: city.country_localized_name
+      },
+      AdministrativeArea: {
+        ID: city.administrative_area_id,
+        LocalizedName: city.administrative_area_localized_name
+      }
+    }));
   }
 }
+

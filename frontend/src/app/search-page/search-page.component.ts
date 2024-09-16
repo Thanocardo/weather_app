@@ -15,6 +15,7 @@ import * as WeatherActions from '../store/weather.actions';
 export class SearchPageComponent extends BasePageComponent implements OnInit {
 
   ngOnInit(): void {
+    this.store.dispatch(WeatherActions.loadFavorites())
     const sofiaCityKey = '51097';
     this.store.dispatch(WeatherActions.loadCurrentWeather({ cityKey: sofiaCityKey }));
   }
@@ -22,7 +23,7 @@ export class SearchPageComponent extends BasePageComponent implements OnInit {
   searchCity(city: string): void {
     this.store.dispatch(WeatherActions.loadCityAutocomplete({ query: city }));
     this.cities.subscribe(cities => {
-      cities.forEach((city) => {
+      cities.forEach(city => {
         this.store.dispatch(WeatherActions.loadCurrentWeather({ cityKey: city.Key }))
       })
     })

@@ -1,12 +1,12 @@
 <section>
 
-    @if ((favorites | async)!.length > 0) {
+    @if ((favorites | async).length > 0) {
         <div id="tuggle-button">
             <button class="btn btn-primary btn-lg" (click)="toggleCelsiusToFahrenheit( temperatureUnit )">
                 {{ temperatureUnit == "F" ? 'Change to °C' : 'Change to °F'}} 
             </button>
         </div>
-        @for (curCity of (favorites | async); track curCity.Key) {
+        @for (curCity of (favorites | async); track curCity) {
         <div class="row d-flex justify-content-center py-4">
             <div class="col-md-8 col-lg-6 col-xl-5" id="card">
                 

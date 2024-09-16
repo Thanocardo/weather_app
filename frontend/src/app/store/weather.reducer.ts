@@ -1,13 +1,14 @@
 import { createReducer, on } from "@ngrx/store";
 import { City, WeatherData, WeatherForecast } from "./weather.actions";
 import * as WeatherActions from '../store/weather.actions';
+import { Observable } from "rxjs";
 
 export interface WeatherState {
     cities: City[];
     currentWeather: { [cityKey: string]: WeatherData };
     selectedCity: any,
     forecast: WeatherForecast | null;
-    favorites: City[];
+    favorites: any;
     error: string | null;
   }
   
@@ -56,9 +57,9 @@ export const weatherReducer = createReducer(
       ...state,
       favorites: [...state.favorites, city],
     })),
-    on(WeatherActions.removeFavorite, (state, { cityKey }) => ({
+    on(WeatherActions.removeFavorite, (state, { city }) => ({
       ...state,
-      favorites: state.favorites.filter(fav => fav.Key !== cityKey),
+      favorites: state.favorites.filter(fav => fav.Key !== city.Key),
     })),
     on(WeatherActions.loadFavoritesSuccess, (state, { favorites }) => ({
       ...state,
