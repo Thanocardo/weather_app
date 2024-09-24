@@ -7,16 +7,90 @@
                 </div>
             </form>
             <button type="submit" class="btn btn-primary" form="cityForm">Search City</button>
+            <p>{{ search_count}}</p>
         </div>
     </div>
 
-    @if ((cities | async)!.length > 0) {
+    @if ((cities | async)!.length > 0 && search_count > 0) {
         <div id="tuggle-button">
             <button class="btn btn-primary btn-lg" (click)="toggleCelsiusToFahrenheit( temperatureUnit )">
                 {{ temperatureUnit == "F" ? 'Change to °C' : 'Change to °F'}} 
             </button>
         </div>
         @for (curCity of (cities | async); track curCity.Key) {
+        <div class="row d-flex justify-content-center py-4">
+            <div class="col-md-8 col-lg-6 col-xl-5" id="card">
+                
+                <div class="card text-body" style=" border-radius: 35px; background:rgba(255, 237, 237, 0.6); " >
+                    <div>
+                        <div class="card-body p-4">
+                            <div class="d-flex">
+                                <h3 class="flex-grow-1" style="font-weight: bold;">{{ curCity.LocalizedName }}</h3>
+                                <h4 style="font-weight: bold;">{{ curCity.Country.ID }}</h4>
+                            </div>
+                    
+                @if ((currentWeather | async)![curCity.Key]) {
+                    <div class="d-flex flex-column text-center mt-5 mb-4">
+                        <h6 class="display-4 mb-0 font-weight-bold" style="font-weight: bold;"> {{ ((currentWeather | async)![curCity.Key].Temperature[temperatureUnit === 'C' ? 'Metric' : 'Imperial'].Value).toFixed(0) }}°{{ temperatureUnit }} </h6>
+                        <span style="color: #000000; font-weight: bold;">{{ (currentWeather | async)![curCity.Key].WeatherText }}</span>
+                    </div>
+                    @if (selectedCity === curCity) {
+                        <h3 id="centerTexth" (click)="unselectCity()" style="cursor: pointer; padding-bottom: 15px;">Hide Forecast</h3>
+                        <div>
+                            <h3 id="centerTexth">5-Day Forecast:</h3>
+                            @for (day of (forecast | async)!.DailyForecasts; track day.Date) {
+                                <h3 id="centerTexth">{{ getDayOfWeek(day.Date) }}:
+                                    @if (temperatureUnit === "F") {
+                                    {{ day.Temperature.Minimum.Value.toFixed(0) }}°{{ temperatureUnit }} - {{ day.Temperature.Maximum.Value.toFixed(0) }}°{{ temperatureUnit }} 
+                                    }
+                                    @else if ( temperatureUnit === "C") {
+                                        {{ ((day.Temperature.Minimum.Value - 32)*5/9).toFixed(0) }}°{{ temperatureUnit }} - {{ ((day.Temperature.Maximum.Value - 32)*5/9).toFixed(0) }}°{{ temperatureUnit }}
+                                    }
+                                </h3>
+                                <h5 id="centerTexth" style="font-weight: bold; padding-bottom: 10px;">{{ day.Day.IconPhrase }}</h5>
+                            }
+                        </div>
+                    }
+                    @else {
+                        <h3 id="centerTexth"  (click)="selectCity(curCity)" style="cursor: pointer;">Show Forecast</h3>
+                    }
+                }  
+                @else {
+                    <h2 id="centerTexth" style="font-weight: bolder;"><em>Failed To Load Weather</em></h2>
+                    <h4 id="centerTexth" style="font-weight: bold;">Try Again later</h4>
+                }
+                </div>
+                    </div>
+                        <div class="d-flex align-items-center">
+                            <div class="flex-grow-1" style="font-size: 1rem;">
+                                <button (click)="toggleFavorite(curCity)" style="background: none; border: none; outline: none; box-shadow: none;">
+                                    @if (isFavorite(curCity.Key)) {
+                                        <img id="favIcon" src="icons8-star1.png" alt="remove-to-favourite-icon"> 
+                                    }
+                                    @else {
+                                        <img id="favIcon" src="icons8-star2.png" alt="add-to-favourite-icon">
+                                    }
+                                </button>
+                            </div>
+                        @if ((currentWeather | async)![curCity.Key]) {
+                            <div>
+                                <img [src]="(currentWeather | async)![curCity.Key].WeatherIcon + '.png'" width="150px" style="margin: -20px;"> 
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        }
+    }
+    @else if ((favorites | async)!.length > 0 && search_count == 0) {
+        <div id="tuggle-button">
+            <button class="btn btn-primary btn-lg" (click)="toggleCelsiusToFahrenheit( temperatureUnit )">
+                {{ temperatureUnit == "F" ? 'Change to °C' : 'Change to °F'}} 
+            </button>
+        </div>
+        @for (curCity of (favorites | async); track curCity.Key) {
         <div class="row d-flex justify-content-center py-4">
             <div class="col-md-8 col-lg-6 col-xl-5" id="card">
                 

@@ -25,22 +25,7 @@ export class FavoriteCitiesController {
   @Patch('remove/:city_id')
   async removeFavoriteCityUser(@Headers('Authorization') authHeader: string, @Param('city_id') city_id: string) {
     const token = authHeader.replace('Bearer ', '');
-    await this.favoriteCitiesService.removeFavoriteCity(token, city_id);
+    return this.favoriteCitiesService.removeFavoriteCity(token, city_id);
   }
 
 }
-
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.favoriteCitiesService.findOne(+id);
-  // }
-
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateFavoriteCityDto: UpdateFavoriteCityDto) {
-  //   return this.favoriteCitiesService.update(+id, updateFavoriteCityDto);
-  // }
-
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.favoriteCitiesService.remove(+id);
-  // }

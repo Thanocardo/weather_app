@@ -38,10 +38,3 @@ export class FavoriteCity{
     @ManyToOne(() => User, (user) => user.fav_cities, { nullable: true })
     user?: User | null;
 }
-// {"Version":1,
-//     "Key":"51097",
-//     "Type":"City",
-//     "Rank":20,
-//     "LocalizedName":"Sofia",
-//     "Country":{"ID":"BG","LocalizedName":"Bulgaria"},
-//     "AdministrativeArea":{"ID":"22","LocalizedName":"Sofia City"}},

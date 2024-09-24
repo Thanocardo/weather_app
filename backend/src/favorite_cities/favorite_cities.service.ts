@@ -71,7 +71,7 @@ export class FavoriteCitiesService {
     
     const toReturn = this.mapToCityInterface(cities)
 
-    return toReturn
+    return await toReturn
   }
 
   async removeFavoriteCity(token: string, city_id: string) {
