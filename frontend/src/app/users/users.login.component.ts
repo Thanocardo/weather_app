@@ -14,7 +14,7 @@ import { AuthService } from '../_handlers/auth';
 export class UsersLoginComponent {
     constructor(private authService: AuthService, private router: Router) {}
 
-    invalidCretedtials: boolean = false
+    errorMessage: string;
 
     loginForm = new FormGroup({
       email: new FormControl('', [Validators.required, Validators.email]),
@@ -40,8 +40,13 @@ export class UsersLoginComponent {
               window.location.reload()
             },
             error: (err) => {
-              console.error('Login failed', err);
-              this.invalidCretedtials = true
+              console.log(err)
+
+              if (err.status === 400) {
+                this.errorMessage = err.error.message?.[0] || "An error occurred during login";
+              } else {
+                this.errorMessage = 'An unexpected error occurred';
+              }
             }
           })
     }

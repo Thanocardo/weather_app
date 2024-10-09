@@ -13,6 +13,8 @@ import { AuthService } from '../_handlers/auth';
 export class UsersSignUpComponent {
 
   constructor(private authService: AuthService, private router: Router) {}
+
+  errorMessage: string;
   
   signUpForm = new FormGroup({
     email: new FormControl('', [Validators.required, Validators.email]),
@@ -40,7 +42,13 @@ export class UsersSignUpComponent {
           window.location.reload()
         },
         error: (err) => {
-          console.error('Signup failed', err);
+          console.log(err)
+
+          if (err.status === 400) {
+            this.errorMessage = err.error.message?.[0] || "An error occurred during signup";
+          } else {
+            this.errorMessage = 'An unexpected error occurred';
+          }
         }
       })
     }

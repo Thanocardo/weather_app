@@ -45,6 +45,13 @@
                                         <small>*Passwords do not match.</small> 
                                     }
                                 </div>
+                                
+                                @if (this.errorMessage) {
+                                    <div class="alert alert-danger">
+                                        {{ errorMessage }}
+                                    </div>
+                                }
+
                                 <div class="d-flex justify-content-center">
                                     <button type="sumbit" class="btn btn-dark btn-block btn-lg">Sign Up</button>
                                 </div>

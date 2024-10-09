@@ -1,7 +1,10 @@
 import { IsEmail, IsString, Matches, MinLength } from "class-validator";
+import { IfExists } from "../users_data_decorator";
 
-export class UsersDatumDto {
-    @IsEmail()
+export class UsersDataLoginDto {
+
+    @IsEmail() 
+    @IfExists("User", "email")
     email: string;
 
     @IsString()

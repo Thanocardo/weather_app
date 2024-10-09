@@ -28,8 +28,11 @@
                                         }
                                     }
                                 </div>
-                                @if (invalidCretedtials) {
-                                    <div style="color: red;">*Invalid email or password</div>
+                                
+                                @if (this.errorMessage) {
+                                    <div class="alert alert-danger">
+                                        {{ errorMessage }}
+                                    </div>
                                 }
 
                                 <div class="d-flex justify-content-center">

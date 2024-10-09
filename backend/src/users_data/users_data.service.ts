@@ -1,10 +1,11 @@
 import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
-import { UsersDatumDto } from './dto/users_datum.dto';
+import { UsersDataLoginDto } from './dto/users_datum_login.dto';
 import { Repository } from 'typeorm';
 import { User } from './entities/users_data.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt'
 import { JwtService } from '@nestjs/jwt';
+import { UsersDataSignUpDto } from './dto/users_datum_signup.dto';
 
 @Injectable()
 export class UsersDataService {
@@ -14,12 +15,7 @@ export class UsersDataService {
     private jwtSevice: JwtService,
   ) {}
 
-  async signUp({email, password}: UsersDatumDto) {
-    const emailInUse = await this.findOne(email)
-
-    if (emailInUse) {
-      throw new BadRequestException("Email already is used")
-    }
+  async signUp({email, password}: UsersDataSignUpDto) {
     
     const hashedPassword = await bcrypt.hash(password, 8)
 
@@ -29,11 +25,12 @@ export class UsersDataService {
     return this.login({email, password})
   }
 
-  async login({email, password}: UsersDatumDto) {
+  async login({email, password}: UsersDataLoginDto) {
+
+    console.log(email)
+    console.log(password)
+
     const user = await this.findOne(email);
-    if (!user) {
-      throw new UnauthorizedException('Wrong credentials')
-    }
 
     const passwordMatch = await bcrypt.compare(password, user.password) 
 
