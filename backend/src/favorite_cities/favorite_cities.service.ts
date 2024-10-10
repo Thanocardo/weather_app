@@ -13,25 +13,14 @@ export class FavoriteCitiesService {
     private readonly favCityRepository: Repository<FavoriteCity>,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-    private jwtService: JwtService
   ) {}
 
-  async create(token: string, cityData: CreateFavoriteCityDto) {
-    
-    let decodedToken;
-    try {
-      this.jwtService.verify(token);
-    }
-    catch (error) {
-      throw new UnauthorizedException("Invalid token");
-    }
+  async create(user_data: any, cityData: CreateFavoriteCityDto) {
 
-    decodedToken = this.jwtService.decode(token)
-
-    const user_id = decodedToken.user_id;
+    const user_id = user_data.user_id;
 
     const user = await this.userRepository.findOne({where: { id: user_id }});
-    if (!user) {
+    if (user != user_data) {
       throw new UnauthorizedException("User not found");
     }
 
@@ -50,20 +39,13 @@ export class FavoriteCitiesService {
 
     await this.favCityRepository.save(favoriteCity);
 
-    return await this.findAllFavoriteCitiesByUserToken(token);
+    return await this.findAllFavoriteCitiesByUserToken(user_data);
     
   }
 
-  async findAllFavoriteCitiesByUserToken(token: string) {
+  async findAllFavoriteCitiesByUserToken(user_data: any) {
 
-    try {
-      this.jwtService.verify(token);
-    } catch (error) {
-      throw new UnauthorizedException('Invalid token');
-    }
-
-    const decodedToken = this.jwtService.decode(token)
-    const user_id = decodedToken.user_id;
+    const user_id = user_data.user_id;
 
     const cities = await this.favCityRepository.find({
       where: { user: {id: user_id}}
@@ -74,16 +56,9 @@ export class FavoriteCitiesService {
     return await toReturn
   }
 
-  async removeFavoriteCity(token: string, city_id: string) {
-    
-    try {
-      this.jwtService.verify(token);
-    } catch (error) {
-      throw new UnauthorizedException('Invalid token');
-    }
+  async removeFavoriteCity(user_data: any, city_id: string) {
 
-    const decodedToken = this.jwtService.decode(token)
-    const user_id = decodedToken.user_id;
+    const user_id = user_data.user_id;
 
     const favoriteCity = await this.favCityRepository.find({
       where: {
@@ -100,7 +75,7 @@ export class FavoriteCitiesService {
 
     await this.favCityRepository.save(favoriteCity);
 
-    return await this.findAllFavoriteCitiesByUserToken(token);
+    return await this.findAllFavoriteCitiesByUserToken(user_data);
   }
 
   mapToCityInterface(favoriteCities) {
