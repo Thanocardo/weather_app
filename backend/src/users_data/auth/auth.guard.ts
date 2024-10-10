@@ -12,13 +12,14 @@ export class AuthGuard implements CanActivate {
         if (!token) {
             throw new UnauthorizedException();
           }
-          try {
-            const payload = await this.jwtService.verifyAsync(token);
+        try {
+          const payload = await this.jwtService.verifyAsync(token);
 
-            request['user'] = payload;
-          } catch {
-            throw new UnauthorizedException();
-          }
+          request.params["user"] = payload
+
+        } catch {
+          throw new UnauthorizedException();
+        }
           return true;
         }
       
@@ -26,11 +27,4 @@ export class AuthGuard implements CanActivate {
           const [type, token] = request.headers.authorization?.split(' ') ?? [];
           return type === 'Bearer' ? token : undefined;
     }
-} 
-
-export const GetUser = createParamDecorator(
-  (data: unknown, ctx: ExecutionContext) => {
-    const request = ctx.switchToHttp().getRequest();
-    return request.user
-  }
-)
+}
