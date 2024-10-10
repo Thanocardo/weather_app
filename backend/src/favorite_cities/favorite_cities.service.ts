@@ -20,9 +20,6 @@ export class FavoriteCitiesService {
     const user_id = user_data.user_id;
 
     const user = await this.userRepository.findOne({where: { id: user_id }});
-    if (user != user_data) {
-      throw new UnauthorizedException("User not found");
-    }
 
     const favoriteCity = this.favCityRepository.create({
       key: cityData.Key,
