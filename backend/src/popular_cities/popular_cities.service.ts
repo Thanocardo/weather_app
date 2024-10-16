@@ -27,10 +27,8 @@ export class PopularCitiesService {
   }
 
   async increaseSearchCount(cityData: PopularCityDto[]) {
-    console.log(cityData)
 
     for (let city of cityData) {
-      console.log(city.Key)
       let toSaveCityawait = await this.checkIfCityExists(city)
       toSaveCityawait.search_count += 1
       await this.popularCitiesRepository.save(toSaveCityawait)
