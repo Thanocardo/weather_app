@@ -13,15 +13,15 @@ import * as WeatherActions from '../store/weather.actions';
   styleUrls: ['./search-page.component.css']
 })
 export class SearchPageComponent extends BasePageComponent implements OnInit {
-  search_count = 1
+  search_counts = 1
 
   ngOnInit(): void {
     this.store.dispatch(WeatherActions.loadFavorites());
 
     this.favorites.subscribe(favorites => {
-      if (favorites.length > 0 && this.search_count > 0) {
-        console.log(this.search_count)
-        this.search_count--
+      if (favorites.length > 0 && this.search_counts > 0) {
+        console.log(this.search_counts)
+        this.search_counts--
         favorites.forEach(favoriteCity => {
           this.store.dispatch(WeatherActions.loadCurrentWeather({ cityKey: favoriteCity.Key }));
         });
@@ -33,9 +33,13 @@ export class SearchPageComponent extends BasePageComponent implements OnInit {
   }
 
   searchCity(city: string): void {
-    this.search_count += 3
+    this.search_counts += 3
     this.store.dispatch(WeatherActions.loadCityAutocomplete({ query: city }));
     this.cities.subscribe(cities => {
+      const popularCities = cities
+      if (popularCities.length > 0) {
+        this.store.dispatch(WeatherActions.increaseSearchCountOfPopularCities({ popularCities }))
+      }
       cities.forEach(city => {
         this.store.dispatch(WeatherActions.loadCurrentWeather({ cityKey: city.Key }))
       })

@@ -7,11 +7,10 @@
                 </div>
             </form>
             <button type="submit" class="btn btn-primary" form="cityForm">Search City</button>
-            <p>{{ search_count}}</p>
         </div>
     </div>
 
-    @if ((cities | async)!.length > 0 && search_count > 0) {
+    @if ((cities | async)!.length > 0 && search_counts > 0) {
         <div id="tuggle-button">
             <button class="btn btn-primary btn-lg" (click)="toggleCelsiusToFahrenheit( temperatureUnit )">
                 {{ temperatureUnit == "F" ? 'Change to °C' : 'Change to °F'}} 
@@ -84,7 +83,7 @@
 
         }
     }
-    @else if ((favorites | async)!.length > 0 && search_count == 0) {
+    @else if ((favorites | async)!.length > 0 && search_counts == 0) {
         <div id="tuggle-button">
             <button class="btn btn-primary btn-lg" (click)="toggleCelsiusToFahrenheit( temperatureUnit )">
                 {{ temperatureUnit == "F" ? 'Change to °C' : 'Change to °F'}} 

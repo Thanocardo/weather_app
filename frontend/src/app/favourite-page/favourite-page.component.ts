@@ -1,10 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { BasePageComponent } from '../base-page/base-page.component';
-import { selectFavorites } from '../store/weather.selectors';
 import * as WeatherActions from '../store/weather.actions';
 import { CommonModule } from '@angular/common';
-import { AuthService } from '../_handlers/auth';
-import { switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-favourite-page',

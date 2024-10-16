@@ -8,6 +8,7 @@ export interface City {
     LocalizedName: string;
     Country: {ID: string, LocalizedName: string};
     AdministrativeArea: {ID: string, LocalizedName: string};
+    search_count?: number,
 }
 
 export interface WeatherData {
@@ -142,4 +143,31 @@ export const loadFavorites = createAction('[Favorites] Load Favorites');
 export const loadFavoritesSuccess = createAction(
   '[Favorites] Load Favorites Success',
   props<{ favorites }>()
+);
+
+export const loadPopularCities = createAction('[Popular] Load Popular Cities',);
+
+export const loadPopularCitiesSuccess = createAction(
+  '[Popular] Load Popular Cities Success',
+  props<{ popularCities: City[] }>()
+);
+
+export const loadPopularCitiesFailure = createAction(
+  '[Weather] Load Popular Cities Failure',
+  props<{ error: string }>()
+);
+
+export const increaseSearchCountOfPopularCities = createAction(
+  '[Weather] Increase Search Count Of Popular Cities',
+  props<{ popularCities: City[] }>()
+);
+
+export const increaseSearchCountOfPopularCitiesSuccess = createAction(
+  '[Weather] Increase Search Count Of Popular Cities Success',
+  props<{ popularCities: City[] }>()
+);
+
+export const increaseSearchCountOfPopularCitiesFailure = createAction(
+  '[Weather] Increase Search Count Of Popular Cities Failure',
+  props<{ error: string }>()
 );

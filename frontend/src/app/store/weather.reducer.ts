@@ -9,6 +9,7 @@ export interface WeatherState {
     selectedCity: any,
     forecast: WeatherForecast | null;
     favorites: any;
+    popularCities: City[];
     error: string | null;
   }
   
@@ -18,6 +19,7 @@ export const initialState: WeatherState = {
     selectedCity: {},
     forecast: null,
     favorites: [],
+    popularCities: [],
     error: null,
   };
 
@@ -65,7 +67,25 @@ export const weatherReducer = createReducer(
       ...state,
       favorites,
       error: null,
-    }))
+    })),
+    on(WeatherActions.loadPopularCitiesSuccess, (state, { popularCities }) => ({
+      ...state,
+      popularCities,
+      error: null
+    })),
+    on(WeatherActions.loadPopularCitiesFailure, (state, { error }) => ({
+      ...state,
+      error,
+    })),
+    on(WeatherActions.increaseSearchCountOfPopularCitiesSuccess, (state, { popularCities }) => ({
+      ...state,
+      popularCities,
+      error: null
+    })),
+    on(WeatherActions.increaseSearchCountOfPopularCitiesFailure, (state, { error }) => ({
+      ...state,
+      error,
+    })),
   );
 
 

@@ -27,3 +27,8 @@ export const selectFavorites = createSelector(
   selectWeatherState,
   (state: WeatherState) => state.favorites
 );
+
+export const selectPopularCities = createSelector(
+  selectWeatherState,
+  (state: WeatherState) => state.popularCities
+);

@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { WeatherApiHandler } from '../_handlers/weather-api-handler';
-import { catchError, exhaustMap, map, mergeMap, switchMap, } from 'rxjs/operators';
+import { catchError, debounce, debounceTime, exhaustMap, map, mergeMap, switchMap, } from 'rxjs/operators';
 import { of } from 'rxjs';
 import * as WeatherActions from '../store/weather.actions';
 import { AuthService } from '../_handlers/auth';
 import { FavoriteHandler } from '../_handlers/favorite-handler';
+import { PopularCitiesHandler } from '../_handlers/popular-cities-handler';
 
 @Injectable()
 export class WeatherEffects {
@@ -15,6 +16,7 @@ export class WeatherEffects {
     private weatherApiHandler: WeatherApiHandler,
     private authService: AuthService,
     private favoriteHandler: FavoriteHandler,
+    private popularCitiesHandler: PopularCitiesHandler,
   ) {}
 
   loadCityAutocomplete$ = createEffect(() =>
@@ -102,6 +104,31 @@ export class WeatherEffects {
           );
         }
       })
+    )
+  );
+
+  loadPopularCityAutocomplete$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(WeatherActions.loadPopularCities),
+      exhaustMap(() =>
+        this.popularCitiesHandler.getPopularCities().pipe(
+          map(popularCities => WeatherActions.loadPopularCitiesSuccess({ popularCities })),
+          catchError(error => of(WeatherActions.loadPopularCitiesFailure({ error: error.message })))
+        )
+      )
+    )
+  );
+
+  increaseSearchCountOfCityAutocomplete$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(WeatherActions.increaseSearchCountOfPopularCities),
+      debounceTime(300),
+      mergeMap(action =>
+        this.popularCitiesHandler.increaseSearchCount(action.popularCities).pipe(
+          map(popularCities => WeatherActions.increaseSearchCountOfPopularCitiesSuccess({ popularCities })),
+          catchError(error => of(WeatherActions.increaseSearchCountOfPopularCitiesFailure({ error: error.message })))
+        )
+      )
     )
   );
 }

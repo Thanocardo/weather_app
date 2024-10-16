@@ -9,6 +9,8 @@ import config from './config';
 import { JwtModule } from '@nestjs/jwt';
 import { FavoriteCitiesModule } from './favorite_cities/favorite_cities.module';
 import { FavoriteCity } from './favorite_cities/entities/favorite_city.entity';
+import { PopularCitiesModule } from './popular_cities/popular_cities.module';
+import { PopularCity } from './popular_cities/entities/popular_city.entity';
 
 @Module({
   imports: [ConfigModule.forRoot({
@@ -32,11 +34,11 @@ import { FavoriteCity } from './favorite_cities/entities/favorite_city.entity';
         username: config.get('database.username'),
         password: config.get('database.password'),
         database: config.get('database.database'),
-        entities: [User, FavoriteCity],
+        entities: [User, FavoriteCity, PopularCity],
         synchronize: true,
       }),
       inject: [ConfigService]
-  }), UsersDataModule, FavoriteCitiesModule],
+  }), UsersDataModule, FavoriteCitiesModule, PopularCitiesModule],
   controllers: [AppController,],
   providers: [AppService],
 })
