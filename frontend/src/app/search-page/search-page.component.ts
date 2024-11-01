@@ -20,7 +20,6 @@ export class SearchPageComponent extends BasePageComponent implements OnInit {
 
     this.favorites.subscribe(favorites => {
       if (favorites.length > 0 && this.search_counts > 0) {
-        console.log(this.search_counts)
         this.search_counts--
         favorites.forEach(favoriteCity => {
           this.store.dispatch(WeatherActions.loadCurrentWeather({ cityKey: favoriteCity.Key }));

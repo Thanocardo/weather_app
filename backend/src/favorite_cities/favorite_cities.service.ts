@@ -3,7 +3,6 @@ import { FavoriteCity } from './entities/favorite_city.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from 'src/users_data/entities/users_data.entity';
-import { JwtService } from '@nestjs/jwt';
 import { CreateFavoriteCityDto } from './dto/create-favorite_city.dto';
 
 @Injectable()
