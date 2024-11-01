@@ -11,6 +11,8 @@ import { FavoriteCitiesModule } from './favorite_cities/favorite_cities.module';
 import { FavoriteCity } from './favorite_cities/entities/favorite_city.entity';
 import { PopularCitiesModule } from './popular_cities/popular_cities.module';
 import { PopularCity } from './popular_cities/entities/popular_city.entity';
+import { RefreshTokenModule } from './refresh_token/refresh_token.module';
+import { RefreshToken } from './refresh_token/entities/refresh_token.entity';
 
 @Module({
   imports: [ConfigModule.forRoot({
@@ -25,7 +27,7 @@ import { PopularCity } from './popular_cities/entities/popular_city.entity';
       }),
       global: true,
       inject: [ConfigService]
-    }),
+    }),    
   TypeOrmModule.forRootAsync({
       useFactory: async (config) => ({
         type: 'postgres',
@@ -34,11 +36,11 @@ import { PopularCity } from './popular_cities/entities/popular_city.entity';
         username: config.get('database.username'),
         password: config.get('database.password'),
         database: config.get('database.database'),
-        entities: [User, FavoriteCity, PopularCity],
+        entities: [User, FavoriteCity, PopularCity, RefreshToken],
         synchronize: true,
       }),
       inject: [ConfigService]
-  }), UsersDataModule, FavoriteCitiesModule, PopularCitiesModule],
+  }), UsersDataModule, FavoriteCitiesModule, PopularCitiesModule, RefreshTokenModule],
   controllers: [AppController,],
   providers: [AppService],
 })

@@ -1,6 +1,7 @@
 export default () => ({
     jwt: {
-        secret: process.env.secret_key
+        secret: process.env.token_secret_key,
+        ref_secret: process.env.refresh_token_secret_key
     },
     database: {
         host: process.env.host,
