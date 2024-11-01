@@ -6,6 +6,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt'
 import { JwtService } from '@nestjs/jwt';
 import { UsersDataSignUpDto } from './dto/users_datum_signup.dto';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class UsersDataService {
@@ -13,6 +14,7 @@ export class UsersDataService {
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
     private jwtSevice: JwtService,
+    private readonly configService: ConfigService,
   ) {}
 
   async signUp({email, password}: UsersDataSignUpDto) {
@@ -27,9 +29,6 @@ export class UsersDataService {
 
   async login({email, password}: UsersDataLoginDto) {
 
-    console.log(email)
-    console.log(password)
-
     const user = await this.findOne(email);
 
     const passwordMatch = await bcrypt.compare(password, user.password) 
@@ -38,13 +37,13 @@ export class UsersDataService {
       throw new UnauthorizedException('Wrong credentials')
     }
 
-    return this.generateUserTokens(user.id, email)
+    return this.generateUserTokens(user.id)
   }
 
-  async generateUserTokens(user_id, email) {
-    const Token = this.jwtSevice.sign({user_id}, {expiresIn: '3d'})
+  async generateUserTokens(user_id) {
+    const Token = this.jwtSevice.sign({user_id}, {secret: this.configService.get('jwt.secret'), expiresIn: '30m'})
 
-    return {user_id, email, jwsToken: Token}
+    return { jwsToken: Token }
   }
 
   async findOne(email: string) {
